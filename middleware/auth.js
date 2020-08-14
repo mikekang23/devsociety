@@ -12,7 +12,11 @@ module.exports = function(req, res, next) {
 
   //verify if there is a jsonwebtoken
   try {
+    //get the decoded payload
+    //we provide a secret, and if the secret is wrong, then err is returned instead
     const decoded = jwt.verify(token, config.get('jwtSecret'));
+
+    //assign the decoded and verified user into req.user
     req.user = decoded.user;
     next();
   }catch(err){
