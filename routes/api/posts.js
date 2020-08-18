@@ -119,4 +119,54 @@ router.put('/:postId/like', auth, async(req, res) => {
     res.status(500).send('problem deleting the post')
   }
 })
+
+router.post(
+  '/:postId/comment',
+  [
+    auth,
+    check('text', 'Text is required').not().isEmpty()
+  ], async (req, res) => {
+        try {
+        const post = await Post.findById(req.params.postId);
+        const user = await User.findById(req.user.id);
+
+        const commentsByUser = post.comments.filter(comment => {
+          return comment.user.id === req.user.id
+        })
+        post.comments.unshift(
+          {
+            user: req.user.id,
+            text: req.body.text,
+            name: user.name,
+            avatar: user.avatar,
+            date: Date.now()
+          }
+        )
+
+        await post.save()
+        res.json(post.comments)
+
+      } catch (e) {
+        console.log(e.message)
+        res.status(500).send('could not post a comment')
+      }
+    }
+);
+
+router.delete('/:postId/comment/:commentId', auth, async (req, res) => {
+  const user = await User.findById(req.user.id);
+  const post = await Post.findById(req.params.postId)
+  const comment = post.comments.findIndex(comment => comment.id === req.params.commentId)
+  console.log(comment);
+  if(comment >= 0){
+    post.comments.splice(comment, 1, )
+    post.save()
+    res.json(post.comments)
+  }else{
+    res.status(500).send('could not delete the comment')
+  }
+
+
+})
+
 module.exports = router;
