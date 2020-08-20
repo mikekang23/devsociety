@@ -1,26 +1,35 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Fragment } from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import Navbar from './components/layouts/Navbar';
+import Landing from './components/layouts/Landing';
+import Register from './components/auth/Register';
+import Login from './components/auth/Login';
+import Alert from './components/layouts/Alert';
+import { connect } from 'react-redux';
 
-function App() {
+
+import "./App.css";
+
+const App = (props) => {
+  console.log(props)
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Fragment>
+        <Navbar />
+        <Route exact path="/" component={Landing}/>
+        <section className="container">
+          <Alert />
+          <Switch>
+            <Route exact path="/register" component={Register} />
+            <Route exact path="/login" component={Login} />
+          </Switch>
+        </section>
+      </Fragment>
+    </Router>
   );
 }
 
-export default App;
+const mapStateToProps = state => {
+  return state
+}
+export default connect(mapStateToProps)(App);
